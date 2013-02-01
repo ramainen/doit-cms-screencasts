@@ -1,0 +1,43 @@
+ 
+
+.hidden { position:absolute; top:0; left:-9999px; width:1px; height:1px; overflow:hidden; }
+ 
+ .admin_edit_form .input-xlarge
+ {
+	width:500px;
+ }
+ 
+.top_header
+{
+height:50px;
+background:#17395C;
+border-bottom:1px solid white;
+}
+
+.admin_header
+
+{
+border:1px solid white;
+border-radius:3px;
+position:relative;
+top:-7px;
+
+}
+
+.whitelogo
+{
+font-size:30px;
+font-family:Georgia;
+line-height:50px;
+color:#E4F1FF;
+text-shadow: black 0px 1px 0px;
+}
+ 
+  
+.sorting_element
+{
+	padding:6px;
+	border:1px solid #5090B7;
+	width:600px;
+	background:white;
+}

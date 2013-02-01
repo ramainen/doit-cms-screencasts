@@ -1,0 +1,198 @@
+<!doctype html>
+<html>
+<head>
+<title>Панель администрирования</title>
+<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="/cms/external/fixed960.css" />
+	<!-- <link rel="stylesheet" type="text/css" href="/cms/external/jqueryui/jquery-ui-1.8.10.custom.css" /> -->
+ 
+	
+	<link rel="stylesheet" type="text/css" href="/cms/external/bootstrap/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="/cms/external/bootstrap/css/datepicker.css" />
+	
+	<link rel="stylesheet" type="text/css" href="/cms/external/bootstrap/css/bootstrap-responsive.min.css" />
+	
+	
+	<link rel="stylesheet" type="text/css" href="/cms/mod_admin/assets/style.css" />
+
+	<script type="text/javascript" src="/cms/external/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="/cms/external/jqueryui/jquery-ui-1.8.10.custom.min.js"></script>
+	
+	<script src="/cms/external/bootstrap/js/bootstrap.js"></script>
+	<script src="/cms/external/bootstrap/js/bootstrap-datepicker.js"></script>
+	
+ 
+	<script type="text/javascript" src="/cms/external/tiny_mce/jquery.tinymce.js"></script>
+	<script type="text/javascript" src="/cms/mod_admin/assets/script.js"></script>
+</head>
+<body>
+
+<div class="top_header" >
+	<div class="container_12" >
+		<div class="grid_12 whitelogo">
+			Панель администрирования
+		</div>
+	</div>
+</div>
+
+
+<?php if(iam('developer') && url(1,2)=='admin/edit'){ 
+$fields =url(3);
+if (isset($_GET['fields']) && $_GET['fields']!=''){
+	$fields = $_GET['fields'];
+}
+$filename= '/app/fields/'.str_replace('.','',str_replace('/','',str_replace('\\','',$fields))).'.ini';
+?>
+ <div class="field_edit_dialog modal " style="display:none"  >
+ <div class="modal-header">
+    <button class="close" data-dismiss="modal">×</button>
+    <h3>Редактирование файла  <?php print $filename ?></h3>
+  </div>
+  
+  <div class="modal-body">
+  
+  
+ <form method="post">
+ <input type="hidden" name="admin_action" value="edit_field">
+ <input type="hidden" name="admin_command_redirect_close" value="yes">
+ 
+  <div class="alert field_template_question"  style="display:none;padding:10px;margin-bottom:10px;margin-top:5px;">
+	 Шаблон пустой. Использовать заготовку?
+<input type="button" class="btn btn-primary" onclick=" create_field_template();return false;" value="Да" role="button">
+	<input type="button" class="btn" onclick="$('.field_template_question').hide();return false;" value="Нет, спасибо" role="button">
+
+	</div>
+	
+	
+	<textarea style="width:96%;height:252px;border:1px solid gray;background:white;font-family:consolas, 'courier new', monospace" class="edit_field_content"  name="content"><?php
+		
+		if(file_exists($_SERVER['DOCUMENT_ROOT'].$filename)){
+			print htmlspecialchars(file_get_contents($_SERVER['DOCUMENT_ROOT'].$filename));
+		}
+	
+	?></textarea>
+ </form>
+ </div>
+  <div class="modal-footer">
+    <a href="#" data-dismiss="modal" class="btn">Отмена</a>
+    <a href="#" class="btn btn-primary modal-edit-save">Сохранить</a>
+  </div>
+
+ </div>
+<?php } ?>		
+		
+<div class="container_12" >
+
+
+<div class="navbar admin_header navbar-inverse">
+  <div class="navbar-inner ">
+    <div class="container">
+      <ul class="nav">
+		  <li  >
+			<a href="/"    >На сайт</a>
+		  </li>
+		  
+		  <li class="dropdown">
+    <a href="#"
+          class="dropdown-toggle"
+          data-toggle="dropdown">
+          Редактировать
+          <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
+	
+	
+ 	<?php foreach (d()->admin['leftmenu'] as $_value) { ?>
+	
+		<?php if(substr( $_value[0],0,7)!='/admin/'){ ?>
+			<li><a href="/admin/list/<?php print $_value[0]; ?>"   ><?php print $_value[1]; ?></a></li>
+		<?php }else{ ?>
+			<li><a href="<?php print $_value[0]; ?>"   ><?php print $_value[1]; ?></a></li>
+		<?php } ?>
+	<?php } ?>
+        
+		
+		
+    	
+    </ul>
+  </li>
+
+<?php if(iam('developer')){ ?>
+  
+		  <li class="dropdown">
+    <a href="#"
+          class="dropdown-toggle"
+          data-toggle="dropdown">
+          Скаффолдинг
+          <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
+	
+	
+	<li><a href="/admin/scaffold/new">Создать</a></li>
+		<?php if(url(1,2)=='admin/edit') {?>
+		<li><a href="javascript:void(0)" onclick="show_field_editor();return false;" class="show_field_editor">Текущий шаблон</a></li>
+		<?php } ?>
+
+		
+		<li><a href="/admin/scaffold/install_plugin">Установить расширение</a></li>
+		<li><a href="/admin/scaffold/update_system">Обновить систему</a></li>	
+		<li><a href="/admin/scaffold/update_scheme">Обработать схему</a></li>
+    	
+    </ul>
+  </li>
+<?php } ?>  
+  
+   
+		</ul>
+		
+		<ul class="nav pull-right">
+            <li><a href="/admin/logout">Выход</a></li>
+            
+          </ul>
+		  
+		  
+    </div>
+  </div>
+</div>
+ 
+<div class="clear"></div>
+</div>
+<div>
+<div class="container_12" >
+<?php /*
+<div class="grid_2">
+
+<div class="admin-list   ui-corner-all" >
+   <b>Блоки данных</b>
+	<?php
+ 
+	foreach ($this->admin['leftmenu'] as $_value) { ?>
+		<a href="/admin/list/<?php print $_value[0]; ?>" class="admin-link admin_block ui-corner-all ui-state-default" ><?php print $_value[1]; ?></a>
+	<?php } ?>
+    
+</div>
+ 
+</div> */?>
+<div class="grid_12">
+
+		<div class="content" style="">
+		<div class="admin-list   ui-corner-all" >
+{{{content}}}
+</div></div>
+
+
+</div>
+
+ 
+</div>
+<div class="clear"></div>
+</div>
+
+
+	  <div class="clear"></div>
+	  <div class="clear"></div>
+	  <div class="clear"></div>
+	  
+</body>
+</html>
